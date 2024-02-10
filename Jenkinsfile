@@ -73,6 +73,23 @@ pipeline{
                }
             }
         }
+        stage('Push to Jfrog Artifactory'){
+         when { expression {  params.action == 'create' } }
+            steps{
+               script{
+                   
+                    def server = Artifactory.server '54.219.137.140'
+                    def uploadSpec = '''{
+                      "files": [{
+                      "pattern": "kubernetes-configmap-reload-0.0.1-SNAPSHOT.jar",
+                      "target": "http://54.219.137.140:8082/artifactory/example-repo-local/"
+                       }]
+                        }'''
+                       server.upload(uploadSpec) 
+    
+               }
+            }
+        }
         stage('Docker Image Build'){
          when { expression {  params.action == 'create' } }
             steps{
